@@ -9,7 +9,7 @@ export class UserController {
     constructor(private userService: UserService) { }
     @Get('/get-user')
     getUser() { 
-        return this.userService.findUser();
+        return this.userService.find();
     }
 
     @Post()
