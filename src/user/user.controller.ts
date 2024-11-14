@@ -1,34 +1,33 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UserService } from './user.service';
+/* eslint-disable @typescript-eslint/no-unused-vars */
+import { Body, Controller, Delete, Get, Param, Post, Put } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 
-@Controller('user')
+@Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+    constructor(private userService: UserService) { }
+    @Get('/get-user')
+    getUser() { 
+        return this.userService.findUser();
+    }
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.userService.create(createUserDto);
-  }
+    @Post()
+    createUser(@Body() createUserDto: CreateUserDto) { 
+       return this.userService.createUser(createUserDto);
 
-  @Get()
-  findAll() {
-    return this.userService.findAll();
-  }
+    }  
+    
+    @Put(':id')
+    update(@Param('id') id: number, @Body() updateUserDto: UpdateUserDto) { 
+        return this.userService.update(id, updateUserDto);
+    }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.userService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.userService.update(+id, updateUserDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.userService.remove(+id);
-  }
+    @Delete(':id')
+    delete(@Param('id') id: number) { 
+        return this.userService.delete(id);
+    }
 }
+
+export { UserService };
+
