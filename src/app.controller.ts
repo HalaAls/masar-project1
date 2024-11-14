@@ -41,4 +41,6 @@ export class AppController {
   deleteData(): string {
     return 'delete';
   }
+
+  
 }
