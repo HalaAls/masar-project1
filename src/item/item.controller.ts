@@ -31,4 +31,24 @@ export class ItemController {
   remove(@Param('id') id: string) {
     return this.itemService.remove(+id);
   }
+
+
+
+  // GET endpoint to find items by a price (or other filters)
+  @Get('price/:price')
+  findByPrice(@Param('price') price: string) {
+    return this.itemService.findByPrice(+price); // Converting price to number
+  }
+
+  // POST endpoint to create multiple items
+  @Post('bulk')
+  createBulk(@Body() createItemDtos: CreateItemDto[]) {
+    return this.itemService.createBulk(createItemDtos);
+  }
+
+  // DELETE endpoint to remove multiple items by an array of IDs
+  @Delete('bulk')
+  removeBulk(@Body() ids: number[]) {
+    return this.itemService.removeBulk(ids);
+  }
 }
