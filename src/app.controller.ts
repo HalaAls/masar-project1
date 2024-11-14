@@ -1,28 +1,31 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import {
   Body,
   Controller,
   Delete,
   Get,
   HttpException,
+  NotFoundException,
   Param,
   Post,
   Put,
-  Query,
-} from '@nestjs/common';
-import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { UpdateUserDto } from './dto/update-user.dto';
-import { User } from './entities/user.entities';
 
-@Controller('users')
-export class UserController {
-  constructor(private readonly userService: UserService) {}
+} from '@nestjs/common';
+import { UserService } from './user/user.service';
+import { CreateUserDto } from './user/dto/create-user.dto';
+import { User } from './user/entities/user.entity';
+import { UpdateUserDto } from './user/dto/update-user.dto';
+// import { UpdateUserDto } from './user/dto/update-user.dto';
+
+@Controller()
+export class AppController {
+  constructor(private readonly userService: UserService) { }
 
   // Create a new user
   @Post()
   async create(@Body() createUserDto: CreateUserDto): Promise<User> {
     try {
-      return await this.userService.create(createUserDto);
+      return await this.userService.createUser(createUserDto);
     } catch (error) {
       throw new HttpException('Error creating user', 400);
     }
@@ -32,7 +35,7 @@ export class UserController {
   @Get()
   async findAll(): Promise<User[]> {
     try {
-      return await this.userService.findAll();
+      return await this.userService.find();
     } catch (error) {
       throw new HttpException('Error retrieving users', 400);
     }
@@ -42,7 +45,7 @@ export class UserController {
   @Get(':id')
   async findOne(@Param('id') id: number): Promise<User> {
     try {
-      const user = await this.userService.findOne(id);
+      const user = await this.userService.findUser(id);
       if (!user) {
         throw new HttpException('User not found', 404);
       }
@@ -52,25 +55,25 @@ export class UserController {
     }
   }
 
-  // Update a user by ID
-  @Put(':id')
-  async update(
-    @Param('id') id: number,
-    @Body() updateUserDto: UpdateUserDto,
-  ): Promise<User> {
-    try {
-      const updatedUser = await this.userService.update(id, updateUserDto);
-      return updatedUser;
-    } catch (error) {
-      throw new HttpException('Error updating user', 400);
-    }
-  }
 
+
+  @Put(':id')
+  async update(id: number, updateUserDetails: UpdateUserDto): Promise<User> {
+    // Perform the update
+    await this.userService.update(id, { ...updateUserDetails });
+
+    // Retrieve and return the updated user
+    const updatedUser = await this.userService.findUser(id);
+    if (!updatedUser) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return updatedUser;
+  }
   // Remove a user by ID
   @Delete(':id')
   async remove(@Param('id') id: number): Promise<void> {
     try {
-      await this.userService.remove(id);
+      await this.userService.delete(id);
     } catch (error) {
       throw new HttpException('Error deleting user', 400);
     }
