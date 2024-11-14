@@ -3,6 +3,7 @@ import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { UserModule } from './user/user.module';
+import { User } from './user/entities/user.entity';
 
 const entitiesPath = __dirname + '/**/*.entity{.ts,.js}';
 
@@ -16,8 +17,8 @@ const entitiesPath = __dirname + '/**/*.entity{.ts,.js}';
       password: '',
       database: 'masar-db',
       autoLoadEntities: true,
-      entities: [entitiesPath],
-      synchronize: false,
+      entities: [entitiesPath, User],
+      synchronize: true,
       logging: false,
     }),
     UserModule,
@@ -25,4 +26,4 @@ const entitiesPath = __dirname + '/**/*.entity{.ts,.js}';
   controllers: [AppController],
   providers: [AppService],
 })
-export class AppModule {}
+export class AppModule { }
